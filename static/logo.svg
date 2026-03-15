@@ -1,0 +1,16 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del logo -->
+  <rect width="200" height="60" rx="8" fill="#1a1a2e"/>
+  
+  <!-- Estrella anime -->
+  <path d="M25 15l3.09 6.26L35 22.5l-6.91 6.74L29.18 36L25 33.26L20.82 36l1.09-6.76L15 22.5l6.91-1.24L25 15z" fill="#ff6b6b"/>
+  
+  <!-- Texto OtakuTees -->
+  <text x="45" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">Otaku</text>
+  <text x="45" y="42" font-family="Arial, sans-serif" font-size="14" font-weight="normal" fill="#ff6b6b">Tees.store</text>
+  
+  <!-- Elementos decorativos anime -->
+  <circle cx="170" cy="20" r="3" fill="#4ecdc4"/>
+  <circle cx="180" cy="30" r="2" fill="#45b7d1"/>
+  <circle cx="165" cy="40" r="2" fill="#96ceb4"/>
+</svg>

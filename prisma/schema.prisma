@@ -1,0 +1,112 @@
+// Schema de Prisma para OtakuTees.store
+// E-commerce de camisas y sacos personalizados con estampados de anime
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  description String
+  basePrice   Float
+  type        ProductType
+  sizes       String        // JSON string with available sizes
+  colors      String        // JSON string with available colors
+  images      String        // JSON string with image URLs
+  active      Boolean       @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Stamp {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  imageUrl    String
+  price       Float
+  category    String
+  active      Boolean     @default(true)
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  total         Float
+  status        OrderStatus @default(PENDING)
+  paymentId     String?
+  paymentStatus String?
+  shippingInfo  String      // JSON string with shipping details
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id])
+  productId     String
+  product       Product @relation(fields: [productId], references: [id])
+  stampId       String?
+  stamp         Stamp?  @relation(fields: [stampId], references: [id])
+  quantity      Int
+  size          String
+  color         String
+  customization String  // JSON string with customization details
+  price         Float
+  createdAt     DateTime @default(now())
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  imageUrl    String
+  linkUrl     String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProductType {
+  SHIRT
+  JACKET
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
