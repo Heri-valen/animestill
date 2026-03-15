@@ -27,7 +27,7 @@
 			success = true;
 
 			if (data.user.role === 'ADMIN') {
-				window.location.href = '/admin';
+				window.location.href = '/anime-admin';
 			} else {
 				window.location.href = '/';
 			}
