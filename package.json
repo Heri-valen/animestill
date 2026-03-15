@@ -26,6 +26,7 @@
     "@sveltejs/kit": "^2.22.0",
     "@sveltejs/vite-plugin-svelte": "^6.0.0",
     "@tailwindcss/vite": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22",
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.3",
