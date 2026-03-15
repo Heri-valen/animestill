@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { setUser, isAdmin } from '$lib/stores/auth';
-
 	let email = $state('');
 	let password = $state('');
 	let loading = $state(false);
@@ -26,7 +24,6 @@
 				return;
 			}
 
-			setUser(data.user);
 			success = true;
 
 			if (data.user.role === 'ADMIN') {

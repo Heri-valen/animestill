@@ -1,16 +1,14 @@
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
-import { PrismaClient } from '@prisma/client';
+import { db } from '$lib/server/database.js';
 import { compare } from 'bcryptjs';
-
-const prisma = new PrismaClient();
 
 export async function POST({ request, cookies }: RequestEvent) {
 	const { email, password } = await request.json();
 	if (!email || !password) {
 		return json({ error: 'Missing required fields' }, { status: 400 });
 	}
-	const user = await prisma.user.findUnique({ where: { email } });
+	const user = await db.user.findUnique({ where: { email } });
 	if (!user) {
 		return json({ error: 'Invalid credentials' }, { status: 401 });
 	}
