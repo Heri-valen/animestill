@@ -51,25 +51,7 @@
 
 			<!-- User Actions -->
 			<div class="flex items-center space-x-4">
-				<!-- Cart -->
-				<a href="/carrito" class="hover:text-otaku-pink relative text-white transition-colors">
-					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 5m0 0l1.5 8m0 0a2 2 0 104 0m0 0a2 2 0 004 0"
-						/>
-					</svg>
-					{#if cartItems > 0}
-						<span
-							class="bg-otaku-pink absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs text-white"
-						>
-							{cartItems}
-						</span>
-					{/if}
-				</a>
-
+		
 				<!-- User Menu -->
 				<div class="flex items-center space-x-4">
 					<!-- Cart -->

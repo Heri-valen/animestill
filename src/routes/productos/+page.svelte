@@ -1,6 +1,29 @@
 <script lang="ts">
 	let { data } = $props();
 	let viewMode = $state<'grid' | 'list'>('grid');
+
+	const animeLogos = [
+		'🐉',
+		'🔥',
+		'⚔️',
+		'🌸',
+		'⭐',
+		'🎭',
+		'👺',
+		'🗡️',
+		'🏮',
+		'🎴',
+		'🦊',
+		'🐱',
+		'🐲',
+		'👻',
+		'🤖',
+		'💥',
+		'🌙',
+		'☀️',
+		'⚡',
+		'🎌'
+	];
 </script>
 
 <svelte:head>
@@ -8,7 +31,65 @@
 </svelte:head>
 
 <div class="min-h-screen bg-gray-50">
-	<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+	<div class="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f0f23]">
+		<div class="absolute inset-0 opacity-20">
+			<div class="absolute top-10 left-10 animate-pulse text-6xl">🐉</div>
+			<div class="absolute top-20 right-20 animate-pulse text-5xl" style="animation-delay: 0.5s">
+				🔥
+			</div>
+			<div class="absolute top-1/4 left-1/3 animate-pulse text-4xl" style="animation-delay: 1s">
+				⚔️
+			</div>
+			<div
+				class="absolute right-1/4 bottom-20 animate-pulse text-5xl"
+				style="animation-delay: 1.5s"
+			>
+				🌸
+			</div>
+			<div class="absolute bottom-10 left-20 animate-pulse text-4xl" style="animation-delay: 0.3s">
+				⭐
+			</div>
+			<div class="absolute top-1/2 right-10 animate-pulse text-5xl" style="animation-delay: 0.8s">
+				👺
+			</div>
+			<div class="absolute bottom-10 left-1/2 animate-pulse text-4xl" style="animation-delay: 1.2s">
+				🎭
+			</div>
+		</div>
+
+		<div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+			<div class="text-center">
+				<h1 class="mb-4 text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl">
+					<span
+						class="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent"
+					>
+						Tu Estilo Otaku
+					</span>
+				</h1>
+				<p class="mx-auto mb-8 max-w-2xl text-lg text-gray-300">
+					Descubre nuestra colección de playeras y sacks personalizados con los mejores diseños de
+					anime
+				</p>
+				<div class="mb-8 flex flex-wrap justify-center gap-3 text-3xl">
+					{#each animeLogos as logo, i}
+						<span class="animate-bounce" style="animation-delay: {i * 0.1}s">{logo}</span>
+					{/each}
+				</div>
+				<a
+					href="#productos"
+					class="inline-block rounded-full bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-3 text-lg font-bold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-pink-500/30"
+				>
+					Ver Productos ↓
+				</a>
+			</div>
+		</div>
+
+		<div
+			class="absolute right-0 bottom-0 left-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"
+		></div>
+	</div>
+
+	<div id="productos" class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mb-8 flex items-center justify-between">
 			<h1 class="text-3xl font-bold text-gray-900">Nuestros Productos</h1>
 
