@@ -41,6 +41,14 @@
 
 <svelte:head>
 	<title>Iniciar Sesión - OtakuTees.store</title>
+	<style>
+		input[type='password']::-webkit-credentials-auto-fill-button {
+			display: none !important;
+		}
+		input[type='password']::-webkit-caps-lock-indicator {
+			filter: invert(100%);
+		}
+	</style>
 </svelte:head>
 
 <div class="flex min-h-screen items-center justify-center bg-gray-900 px-4 py-12">
