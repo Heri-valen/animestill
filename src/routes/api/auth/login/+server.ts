@@ -25,5 +25,5 @@ export async function POST({ request, cookies }: RequestEvent) {
 		sameSite: 'lax',
 		maxAge: 60 * 60 * 24 * 7
 	});
-	return json({ user: { id: user.id, email: user.email, name: user.name } });
+	return json({ user: { id: user.id, email: user.email, name: user.name, role: user.role } });
 }
