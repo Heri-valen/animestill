@@ -1,39 +1,46 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { enhance } from '$app/forms';
+
+	export let data;
 
 	let collapsed = false;
-	
+
 	const menuItems = [
-		{ icon: '📊', label: 'Dashboard', href: '/admin' },
-		{ icon: '📦', label: 'Productos', href: '/admin/productos' },
-		{ icon: '🛒', label: 'Pedidos', href: '/admin/pedidos' },
-		{ icon: '👥', label: 'Clientes', href: '/admin/clientes' },
-		{ icon: '🖼️', label: 'Stamps', href: '/admin/stamps' },
-		{ icon: '⚙️', label: 'Configuración', href: '/admin/configuracion' }
+		{ icon: '📊', label: 'Dashboard', href: '/anime-admin' },
+		{ icon: '📦', label: 'Productos', href: '/anime-admin/productos' },
+		{ icon: '🛒', label: 'Pedidos', href: '/anime-admin/pedidos' },
+		{ icon: '👥', label: 'Clientes', href: '/anime-admin/clientes' },
+		{ icon: '🖼️', label: 'Stamps', href: '/anime-admin/stamps' },
+		{ icon: '⚙️', label: 'Configuración', href: '/anime-admin/configuracion/pago' }
 	];
 
 	$: currentPath = $page.url.pathname;
 </script>
 
 <div class="flex min-h-screen bg-gray-50">
-	<aside class="bg-gray-900 text-white {collapsed ? 'w-16' : 'w-64'} transition-all duration-300 flex flex-col">
-		<div class="p-4 flex items-center justify-between border-b border-gray-700">
+	<aside
+		class="bg-gray-900 text-white {collapsed
+			? 'w-16'
+			: 'w-64'} flex flex-col transition-all duration-300"
+	>
+		<div class="flex items-center justify-between border-b border-gray-700 p-4">
 			{#if !collapsed}
-				<span class="font-bold text-xl">Admin</span>
+				<span class="text-xl font-bold">Admin</span>
 			{/if}
-			<button 
-				on:click={() => collapsed = !collapsed}
-				class="p-2 hover:bg-gray-800 rounded"
-			>
+			<button on:click={() => (collapsed = !collapsed)} class="rounded p-2 hover:bg-gray-800">
 				{collapsed ? '→' : '←'}
 			</button>
 		</div>
-		
-		<nav class="flex-1 mt-4">
+
+		<nav class="mt-4 flex-1">
 			{#each menuItems as item}
-				<a 
+				<a
 					href={item.href}
-					class="flex items-center px-4 py-3 hover:bg-gray-800 transition-colors {currentPath === item.href ? 'bg-gray-800 border-l-4 border-pink-500' : ''}"
+					class="flex items-center px-4 py-3 transition-colors hover:bg-gray-800 {currentPath ===
+					item.href
+						? 'border-l-4 border-[#ba5258] bg-gray-800'
+						: ''}"
 				>
 					<span class="text-xl">{item.icon}</span>
 					{#if !collapsed}
@@ -43,17 +50,37 @@
 			{/each}
 		</nav>
 
-		<div class="p-4 border-t border-gray-700">
-			<a href="/" class="flex items-center hover:bg-gray-800 p-2 rounded">
-				<span>🏠</span>
+		<!-- User Info & Logout -->
+		{#if data.user}
+			<div class="border-t border-gray-700 p-4">
 				{#if !collapsed}
-					<span class="ml-3">Ver Tienda</span>
+					<div class="mb-3">
+						<p class="text-sm text-gray-400">Logged in as</p>
+						<p class="truncate font-medium">{data.user.email}</p>
+					</div>
 				{/if}
-			</a>
-		</div>
+				<form method="POST" action="/auth/login?/logout" use:enhance>
+					<button
+						type="submit"
+						class="flex w-full items-center rounded p-2 text-left hover:bg-gray-800"
+					>
+						<span>🚪</span>
+						{#if !collapsed}
+							<span class="ml-3">Cerrar Sesión</span>
+						{/if}
+					</button>
+				</form>
+				<a href="/" class="mt-2 flex items-center rounded p-2 hover:bg-gray-800">
+					<span>🏠</span>
+					{#if !collapsed}
+						<span class="ml-3">Ver Tienda</span>
+					{/if}
+				</a>
+			</div>
+		{/if}
 	</aside>
-	
-	<main class="flex-1 p-8 overflow-auto">
+
+	<main class="flex-1 overflow-auto p-8">
 		<slot />
 	</main>
 </div>

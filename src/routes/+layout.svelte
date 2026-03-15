@@ -1,14 +1,30 @@
 <script lang="ts">
 	import { authStore, cartStore } from '$lib/stores/auth';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 
-	let { children } = $props();
-	let cartItems = 0;
+	let { children, data } = $props();
+	let cartItems = $state(0);
+	let showDropdown = $state(false);
+	let dropdownRef: HTMLDivElement;
+
+	function toggleDropdown() {
+		showDropdown = !showDropdown;
+	}
 
 	onMount(() => {
 		cartStore.subscribe((cart) => {
 			cartItems = cart.length;
 		});
+
+		function handleClickOutside(event: MouseEvent) {
+			if (dropdownRef && !dropdownRef.contains(event.target as Node)) {
+				showDropdown = false;
+			}
+		}
+
+		document.addEventListener('click', handleClickOutside);
+		return () => document.removeEventListener('click', handleClickOutside);
 	});
 </script>
 
@@ -55,12 +71,81 @@
 				</a>
 
 				<!-- User Menu -->
-				<div class="flex items-center space-x-2">
-					<a href="/auth/login" class="hover:text-otaku-pink text-white transition-colors">Login</a>
-					<span class="text-gray-400">|</span>
-					<a href="/auth/registro" class="hover:text-otaku-pink text-white transition-colors"
-						>Registro</a
-					>
+				<div class="flex items-center space-x-4">
+					<!-- Cart -->
+					<a href="/carrito" class="hover:text-otaku-pink relative text-white transition-colors">
+						<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 5m0 0l1.5 8m0 0a2 2 0 104 0m0 0a2 2 0 004 0"
+							/>
+						</svg>
+						{#if cartItems > 0}
+							<span
+								class="bg-otaku-pink absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs text-white"
+							>
+								{cartItems}
+							</span>
+						{/if}
+					</a>
+
+					{#if data.user}
+						<!-- Logged in user dropdown -->
+						<div class="relative" bind:this={dropdownRef}>
+							<button
+								onclick={toggleDropdown}
+								class="hover:text-otaku-pink flex items-center space-x-2 text-white transition-colors"
+							>
+								<span class="font-medium">{data.user.name || data.user.email}</span>
+								<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M19 9l-7 7-7-7"
+									/>
+								</svg>
+							</button>
+
+							{#if showDropdown}
+								<div
+									class="ring-opacity-5 absolute right-0 z-50 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black"
+								>
+									<div class="py-1">
+										{#if data.user.isAdmin}
+											<a
+												href="/anime-admin"
+												class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+											>
+												Panel Admin
+											</a>
+										{/if}
+										<form method="POST" action="/auth/login?/logout" use:enhance>
+											<button
+												type="submit"
+												class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+											>
+												Cerrar Sesión
+											</button>
+										</form>
+									</div>
+								</div>
+							{/if}
+						</div>
+					{:else}
+						<!-- Guest user - show login/register -->
+						<div class="flex items-center space-x-2">
+							<a href="/auth/login" class="hover:text-otaku-pink text-white transition-colors"
+								>Login</a
+							>
+							<span class="text-gray-400">|</span>
+							<a href="/auth/registro" class="hover:text-otaku-pink text-white transition-colors"
+								>Registro</a
+							>
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -113,7 +198,7 @@
 		</div>
 
 		<div class="mt-8 border-t border-gray-700 pt-8 text-center text-sm text-gray-400">
-			<p>&copy; 2024 OtakuTees.store. Todos los derechos reservados.</p>
+			<p>&copy; 2026 OtakuTees.store. Todos los derechos reservados.</p>
 		</div>
 	</div>
 </footer>
