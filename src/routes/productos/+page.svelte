@@ -136,9 +136,15 @@
 		{:else if viewMode === 'grid'}
 			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 				{#each data.products as product}
-					{@const images = JSON.parse(product.images || '[]')}
-					{@const colors = JSON.parse(product.colors || '[]')}
-					{@const sizes = JSON.parse(product.sizes || '[]')}
+					{@const images = Array.isArray(product.images)
+						? product.images
+						: JSON.parse(product.images || '[]')}
+					{@const colors = Array.isArray(product.colors)
+						? product.colors
+						: JSON.parse(product.colors || '[]')}
+					{@const sizes = Array.isArray(product.sizes)
+						? product.sizes
+						: JSON.parse(product.sizes || '[]')}
 					<div
 						class="overflow-hidden rounded-lg bg-white shadow-md transition-shadow hover:shadow-lg"
 					>
@@ -193,9 +199,15 @@
 		{:else}
 			<div class="space-y-4">
 				{#each data.products as product}
-					{@const images = JSON.parse(product.images || '[]')}
-					{@const colors = JSON.parse(product.colors || '[]')}
-					{@const sizes = JSON.parse(product.sizes || '[]')}
+					{@const images = Array.isArray(product.images)
+						? product.images
+						: JSON.parse(product.images || '[]')}
+					{@const colors = Array.isArray(product.colors)
+						? product.colors
+						: JSON.parse(product.colors || '[]')}
+					{@const sizes = Array.isArray(product.sizes)
+						? product.sizes
+						: JSON.parse(product.sizes || '[]')}
 					<div class="flex rounded-lg bg-white shadow-md transition-shadow hover:shadow-lg">
 						<div class="w-48 flex-shrink-0 bg-gray-100">
 							{#if images.length > 0}
