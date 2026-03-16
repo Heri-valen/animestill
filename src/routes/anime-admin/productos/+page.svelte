@@ -309,16 +309,24 @@
 							</div>
 						{/if}
 						<label
+							for="product-image"
 							class="cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium hover:bg-gray-200"
 						>
-							<input type="file" accept="image/*" onchange={handleImageUpload} class="hidden" />
 							Subir Imagen
 						</label>
+						<input
+							id="product-image"
+							type="file"
+							accept="image/*"
+							onchange={handleImageUpload}
+							class="hidden"
+						/>
 					</div>
 				</div>
 				<div>
-					<label class="mb-1 block text-sm font-medium">Nombre *</label>
+					<label for="product-name" class="mb-1 block text-sm font-medium">Nombre *</label>
 					<input
+						id="product-name"
 						type="text"
 						bind:value={productForm.name}
 						required
@@ -326,8 +334,10 @@
 					/>
 				</div>
 				<div>
-					<label class="mb-1 block text-sm font-medium">Descripción</label>
+					<label for="product-description" class="mb-1 block text-sm font-medium">Descripción</label
+					>
 					<textarea
+						id="product-description"
 						bind:value={productForm.description}
 						rows="2"
 						class="w-full rounded-lg border p-2"
@@ -335,15 +345,20 @@
 				</div>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
-						<label class="mb-1 block text-sm font-medium">Tipo</label>
-						<select bind:value={productForm.type} class="w-full rounded-lg border p-2">
+						<label for="product-type" class="mb-1 block text-sm font-medium">Tipo</label>
+						<select
+							id="product-type"
+							bind:value={productForm.type}
+							class="w-full rounded-lg border p-2"
+						>
 							<option value="SHIRT">Camiseta</option>
 							<option value="JACKET">Sudadera</option>
 						</select>
 					</div>
 					<div>
-						<label class="mb-1 block text-sm font-medium">Precio *</label>
+						<label for="product-price" class="mb-1 block text-sm font-medium">Precio *</label>
 						<input
+							id="product-price"
 							type="number"
 							bind:value={productForm.basePrice}
 							step="0.01"
@@ -354,8 +369,11 @@
 					</div>
 				</div>
 				<div>
-					<label class="mb-1 block text-sm font-medium">Tallas (separadas por coma)</label>
+					<label for="product-sizes" class="mb-1 block text-sm font-medium"
+						>Tallas (separadas por coma)</label
+					>
 					<input
+						id="product-sizes"
 						type="text"
 						bind:value={productForm.sizes}
 						placeholder="S, M, L, XL"
@@ -363,8 +381,11 @@
 					/>
 				</div>
 				<div>
-					<label class="mb-1 block text-sm font-medium">Colores (separados por coma o hex)</label>
+					<label for="product-colors" class="mb-1 block text-sm font-medium"
+						>Colores (separados por coma o hex)</label
+					>
 					<input
+						id="product-colors"
 						type="text"
 						bind:value={productForm.colors}
 						placeholder="Negro, Blanco, #ff0000"
@@ -373,8 +394,13 @@
 				</div>
 				{#if isEditing}
 					<div class="flex items-center gap-2">
-						<input type="checkbox" id="active" bind:checked={productForm.active} class="h-4 w-4" />
-						<label for="active" class="text-sm font-medium">Producto activo</label>
+						<input
+							type="checkbox"
+							id="product-active"
+							bind:checked={productForm.active}
+							class="h-4 w-4"
+						/>
+						<label for="product-active" class="text-sm font-medium">Producto activo</label>
 					</div>
 				{/if}
 			</div>
