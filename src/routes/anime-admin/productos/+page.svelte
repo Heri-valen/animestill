@@ -6,6 +6,8 @@
 	let showModal = $state(false);
 	let editingProduct = $state<any>(null);
 	let isEditing = $state(false);
+	let imagePreview = $state<string | null>(null);
+	let imageFile = $state<File | null>(null);
 
 	let productForm = $state({
 		name: '',
@@ -14,8 +16,21 @@
 		type: 'SHIRT',
 		sizes: '',
 		colors: '',
-		active: true
+		active: true,
+		imageUrl: ''
 	});
+
+	function handleImageUpload(event: Event) {
+		const file = (event.target as HTMLInputElement).files?.[0];
+		if (file) {
+			imageFile = file;
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				imagePreview = e.target?.result as string;
+			};
+			reader.readAsDataURL(file);
+		}
+	}
 
 	onMount(async () => {
 		try {
@@ -29,6 +44,16 @@
 	});
 
 	async function saveProduct() {
+		let images: string[] = [];
+
+		if (imagePreview) {
+			if (imagePreview.startsWith('data:')) {
+				images = [imagePreview];
+			} else {
+				images = [imagePreview];
+			}
+		}
+
 		const data = {
 			...productForm,
 			sizes: JSON.stringify(
@@ -42,7 +67,8 @@
 					.split(',')
 					.map((c: string) => c.trim())
 					.filter((c: string) => c)
-			)
+			),
+			images: JSON.stringify(images)
 		};
 
 		try {
@@ -112,8 +138,16 @@
 			type: product.type || 'SHIRT',
 			sizes: Array.isArray(parsedSizes) ? parsedSizes.join(', ') : '',
 			colors: Array.isArray(parsedColors) ? parsedColors.join(', ') : '',
-			active: product.active !== false
+			active: product.active !== false,
+			imageUrl: ''
 		};
+		try {
+			const images = JSON.parse(product.images || '[]');
+			imagePreview = images[0] || null;
+		} catch {
+			imagePreview = null;
+		}
+		imageFile = null;
 		showModal = true;
 	}
 
@@ -127,8 +161,11 @@
 			type: 'SHIRT',
 			sizes: '',
 			colors: '',
-			active: true
+			active: true,
+			imageUrl: ''
 		};
+		imagePreview = null;
+		imageFile = null;
 		showModal = true;
 	}
 
@@ -136,6 +173,8 @@
 		showModal = false;
 		editingProduct = null;
 		isEditing = false;
+		imagePreview = null;
+		imageFile = null;
 	}
 </script>
 
@@ -166,6 +205,7 @@
 		<table class="w-full">
 			<thead class="bg-gray-50">
 				<tr>
+					<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Imagen</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
 					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
@@ -175,8 +215,20 @@
 			</thead>
 			<tbody class="divide-y divide-gray-200">
 				{#each products as product}
+					{@const images = JSON.parse(product.images || '[]')}
 					<tr class="hover:bg-gray-50">
-						<td class="px-6 py-4">{product.name}</td>
+						<td class="px-4 py-4">
+							{#if images.length > 0}
+								<img src={images[0]} alt={product.name} class="h-12 w-12 rounded-lg object-cover" />
+							{:else}
+								<div
+									class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 text-xl"
+								>
+									{product.type === 'SHIRT' ? '👕' : '🧥'}
+								</div>
+							{/if}
+						</td>
+						<td class="px-6 py-4 font-medium">{product.name}</td>
 						<td class="px-6 py-4">
 							<span class="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
 								{product.type === 'SHIRT' ? 'Camiseta' : 'Sudadera'}
@@ -244,6 +296,26 @@
 		<div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-6">
 			<h2 class="mb-4 text-xl font-bold">{isEditing ? 'Editar Producto' : 'Nuevo Producto'}</h2>
 			<div class="space-y-4">
+				<div>
+					<label class="mb-1 block text-sm font-medium">Imagen del Producto</label>
+					<div class="relative mt-2 flex items-center gap-4">
+						{#if imagePreview}
+							<img src={imagePreview} alt="Preview" class="h-24 w-24 rounded-lg object-cover" />
+						{:else}
+							<div
+								class="flex h-24 w-24 items-center justify-center rounded-lg bg-gray-100 text-4xl"
+							>
+								{productForm.type === 'SHIRT' ? '👕' : '🧥'}
+							</div>
+						{/if}
+						<label
+							class="cursor-pointer rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium hover:bg-gray-200"
+						>
+							<input type="file" accept="image/*" onchange={handleImageUpload} class="hidden" />
+							Subir Imagen
+						</label>
+					</div>
+				</div>
 				<div>
 					<label class="mb-1 block text-sm font-medium">Nombre *</label>
 					<input
