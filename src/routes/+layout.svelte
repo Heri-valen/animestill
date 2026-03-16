@@ -6,7 +6,7 @@
 	let { children, data } = $props();
 	let cartItems = $state(0);
 	let showDropdown = $state(false);
-	let dropdownRef: HTMLDivElement;
+	let dropdownRef = $state<HTMLDivElement | null>(null);
 
 	function toggleDropdown() {
 		showDropdown = !showDropdown;
@@ -51,7 +51,6 @@
 
 			<!-- User Actions -->
 			<div class="flex items-center space-x-4">
-		
 				<!-- User Menu -->
 				<div class="flex items-center space-x-4">
 					<!-- Cart -->
