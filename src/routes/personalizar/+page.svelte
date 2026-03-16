@@ -283,36 +283,30 @@
 				<div class="relative mb-6 flex justify-center">
 					<div class="relative">
 						<div
-							class="relative mx-auto overflow-hidden rounded-xl shadow-xl transition-all"
-							style="background-color: {selectedColor}; width: 280px; height: 350px;"
+							class="relative mx-auto overflow-hidden rounded-xl bg-gray-100 shadow-xl transition-all"
+							style="width: 280px; height: 350px;"
 						>
 							{#if selectedProduct === 'shirt'}
 								<svg viewBox="0 0 200 260" class="h-full w-full" fill="none">
 									<path
 										d="M40 30 L70 30 L85 60 L115 60 L130 30 L160 30 L170 80 L155 90 L145 70 L145 240 L55 240 L55 70 L45 90 L30 80 Z"
-										fill="rgba(0,0,0,0.1)"
-										stroke="rgba(0,0,0,0.2)"
-										stroke-width="1"
+										fill={selectedColor}
+										stroke="rgba(0,0,0,0.3)"
+										stroke-width="2"
 									/>
+									<path d="M85 60 L115 60 L115 80 L85 80 Z" fill="rgba(0,0,0,0.1)" />
 								</svg>
 							{:else}
 								<svg viewBox="0 0 220 280" class="h-full w-full" fill="none">
 									<path
 										d="M30 20 L60 20 L75 50 L100 35 L125 50 L140 20 L170 20 L185 80 L165 95 L160 70 L160 260 L60 260 L60 70 L55 95 L35 80 Z"
-										fill="rgba(0,0,0,0.1)"
-										stroke="rgba(0,0,0,0.2)"
-										stroke-width="1"
+										fill={selectedColor}
+										stroke="rgba(0,0,0,0.3)"
+										stroke-width="2"
 									/>
-									<path
-										d="M60 70 L30 80 L30 100 L55 90"
-										fill="rgba(0,0,0,0.1)"
-										stroke="rgba(0,0,0,0.2)"
-									/>
-									<path
-										d="M160 70 L190 80 L190 100 L165 90"
-										fill="rgba(0,0,0,0.1)"
-										stroke="rgba(0,0,0,0.2)"
-									/>
+									<path d="M60 70 L30 80 L30 100 L55 90 Z" fill="rgba(0,0,0,0.15)" />
+									<path d="M160 70 L190 80 L190 100 L165 90 Z" fill="rgba(0,0,0,0.15)" />
+									<path d="M100 35 L100 50" stroke="rgba(0,0,0,0.2)" stroke-width="1" />
 								</svg>
 							{/if}
 

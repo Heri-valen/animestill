@@ -35,7 +35,7 @@
 	<title>Carrito de Compras - OtakuTees.store</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
+<div class="bg-gray-50">
 	<div class="relative overflow-hidden bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f0f23]">
 		<div class="absolute inset-0 opacity-30">
 			<div class="absolute top-10 left-10 animate-pulse text-6xl">🛒</div>
@@ -98,27 +98,24 @@
 					<div class="overflow-hidden rounded-xl bg-white shadow-lg">
 						<div class="flex flex-col md:flex-row">
 							<!-- Product Preview -->
-							<div
-								class="relative h-48 w-full flex-shrink-0 md:h-auto md:w-48"
-								style="background-color: {item.color || '#ffffff'}"
-							>
+							<div class="relative h-48 w-full flex-shrink-0 bg-gray-100 md:h-auto md:w-48">
 								<div class="absolute inset-0 flex items-center justify-center">
 									{#if item.productType === 'shirt'}
 										<svg viewBox="0 0 200 260" class="h-full w-full" fill="none">
 											<path
 												d="M40 30 L70 30 L85 60 L115 60 L130 30 L160 30 L170 80 L155 90 L145 70 L145 240 L55 240 L55 70 L45 90 L30 80 Z"
-												fill="rgba(0,0,0,0.1)"
-												stroke="rgba(0,0,0,0.2)"
-												stroke-width="1"
+												fill={item.color || '#ffffff'}
+												stroke="rgba(0,0,0,0.3)"
+												stroke-width="2"
 											/>
 										</svg>
 									{:else}
 										<svg viewBox="0 0 220 280" class="h-full w-full" fill="none">
 											<path
 												d="M30 20 L60 20 L75 50 L100 35 L125 50 L140 20 L170 20 L185 80 L165 95 L160 70 L160 260 L60 260 L60 70 L55 95 L35 80 Z"
-												fill="rgba(0,0,0,0.1)"
-												stroke="rgba(0,0,0,0.2)"
-												stroke-width="1"
+												fill={item.color || '#ffffff'}
+												stroke="rgba(0,0,0,0.3)"
+												stroke-width="2"
 											/>
 										</svg>
 									{/if}
