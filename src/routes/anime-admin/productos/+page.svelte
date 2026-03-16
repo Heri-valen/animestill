@@ -93,14 +93,26 @@
 	function openEditModal(product: any) {
 		editingProduct = product;
 		isEditing = true;
+
+		let parsedSizes: string[] = [];
+		let parsedColors: string[] = [];
+
+		try {
+			parsedSizes = JSON.parse(product.sizes || '[]');
+		} catch {}
+
+		try {
+			parsedColors = JSON.parse(product.colors || '[]');
+		} catch {}
+
 		productForm = {
-			name: product.name,
-			description: product.description,
-			basePrice: product.basePrice,
-			type: product.type,
-			sizes: JSON.parse(product.sizes || '[]').join(', '),
-			colors: JSON.parse(product.colors || '[]').join(', '),
-			active: product.active
+			name: product.name || '',
+			description: product.description || '',
+			basePrice: product.basePrice || 0,
+			type: product.type || 'SHIRT',
+			sizes: Array.isArray(parsedSizes) ? parsedSizes.join(', ') : '',
+			colors: Array.isArray(parsedColors) ? parsedColors.join(', ') : '',
+			active: product.active !== false
 		};
 		showModal = true;
 	}
