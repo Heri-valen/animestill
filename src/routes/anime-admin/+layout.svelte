@@ -9,6 +9,7 @@
 	const menuItems = [
 		{ icon: '📊', label: 'Dashboard', href: '/anime-admin' },
 		{ icon: '📦', label: 'Productos', href: '/anime-admin/productos' },
+		{ icon: '📁', label: 'Categorías', href: '/anime-admin/categorias' },
 		{ icon: '🛒', label: 'Pedidos', href: '/anime-admin/pedidos' },
 		{ icon: '👥', label: 'Clientes', href: '/anime-admin/clientes' },
 		{ icon: '🖼️', label: 'Stamps', href: '/anime-admin/stamps' },
