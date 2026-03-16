@@ -52,6 +52,7 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 				type: body.type,
 				sizes: typeof body.sizes === 'string' ? body.sizes : JSON.stringify(body.sizes || []),
 				colors: typeof body.colors === 'string' ? body.colors : JSON.stringify(body.colors || []),
+				images: typeof body.images === 'string' ? body.images : JSON.stringify(body.images || []),
 				active: body.active
 			}
 		});
