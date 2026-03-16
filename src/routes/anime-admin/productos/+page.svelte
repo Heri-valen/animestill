@@ -122,13 +122,24 @@
 
 		let parsedSizes: string[] = [];
 		let parsedColors: string[] = [];
+		let parsedImages: string[] = [];
 
 		try {
-			parsedSizes = JSON.parse(product.sizes || '[]');
+			parsedSizes = Array.isArray(product.sizes)
+				? product.sizes
+				: JSON.parse(product.sizes || '[]');
 		} catch {}
 
 		try {
-			parsedColors = JSON.parse(product.colors || '[]');
+			parsedColors = Array.isArray(product.colors)
+				? product.colors
+				: JSON.parse(product.colors || '[]');
+		} catch {}
+
+		try {
+			parsedImages = Array.isArray(product.images)
+				? product.images
+				: JSON.parse(product.images || '[]');
 		} catch {}
 
 		productForm = {
@@ -141,12 +152,7 @@
 			active: product.active !== false,
 			imageUrl: ''
 		};
-		try {
-			const images = JSON.parse(product.images || '[]');
-			imagePreview = images[0] || null;
-		} catch {
-			imagePreview = null;
-		}
+		imagePreview = parsedImages[0] || null;
 		imageFile = null;
 		showModal = true;
 	}
@@ -215,7 +221,9 @@
 			</thead>
 			<tbody class="divide-y divide-gray-200">
 				{#each products as product}
-					{@const images = JSON.parse(product.images || '[]')}
+					{@const images = Array.isArray(product.images)
+						? product.images
+						: JSON.parse(product.images || '[]')}
 					<tr class="hover:bg-gray-50">
 						<td class="px-4 py-4">
 							{#if images.length > 0}
