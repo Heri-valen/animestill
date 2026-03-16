@@ -5,14 +5,16 @@
 	let loading = $state(true);
 	let showModal = $state(false);
 	let editingProduct = $state<any>(null);
+	let isEditing = $state(false);
 
-	let newProduct = $state({
+	let productForm = $state({
 		name: '',
 		description: '',
 		basePrice: 0,
 		type: 'SHIRT',
 		sizes: '',
-		colors: ''
+		colors: '',
+		active: true
 	});
 
 	onMount(async () => {
@@ -28,35 +30,100 @@
 
 	async function saveProduct() {
 		const data = {
-			...newProduct,
-			sizes: JSON.stringify(newProduct.sizes.split(',').map(s => s.trim())),
-			colors: JSON.stringify(newProduct.colors.split(',').map(c => c.trim()))
+			...productForm,
+			sizes: JSON.stringify(
+				productForm.sizes
+					.split(',')
+					.map((s: string) => s.trim())
+					.filter((s: string) => s)
+			),
+			colors: JSON.stringify(
+				productForm.colors
+					.split(',')
+					.map((c: string) => c.trim())
+					.filter((c: string) => c)
+			)
 		};
-		
+
 		try {
-			const res = await fetch('/api/products', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(data)
-			});
+			let res;
+			if (isEditing && editingProduct) {
+				res = await fetch(`/api/products/${editingProduct.id}`, {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(data)
+				});
+			} else {
+				res = await fetch('/api/products', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(data)
+				});
+			}
+
 			if (res.ok) {
-				const product = await res.json();
-				products = [...products, product];
-				showModal = false;
-				resetForm();
+				const savedProduct = await res.json();
+				if (isEditing && editingProduct) {
+					products = products.map((p) => (p.id === savedProduct.id ? savedProduct : p));
+				} else {
+					products = [...products, savedProduct];
+				}
+				closeModal();
 			}
 		} catch (e) {
 			console.error('Failed to save product:', e);
 		}
 	}
 
-	function resetForm() {
-		newProduct.name = '';
-		newProduct.description = '';
-		newProduct.basePrice = 0;
-		newProduct.type = 'SHIRT';
-		newProduct.sizes = '';
-		newProduct.colors = '';
+	async function deleteProduct(id: string) {
+		if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+		try {
+			const res = await fetch(`/api/products/${id}`, {
+				method: 'DELETE'
+			});
+			if (res.ok) {
+				products = products.filter((p) => p.id !== id);
+			}
+		} catch (e) {
+			console.error('Failed to delete product:', e);
+		}
+	}
+
+	function openEditModal(product: any) {
+		editingProduct = product;
+		isEditing = true;
+		productForm = {
+			name: product.name,
+			description: product.description,
+			basePrice: product.basePrice,
+			type: product.type,
+			sizes: JSON.parse(product.sizes || '[]').join(', '),
+			colors: JSON.parse(product.colors || '[]').join(', '),
+			active: product.active
+		};
+		showModal = true;
+	}
+
+	function openNewModal() {
+		editingProduct = null;
+		isEditing = false;
+		productForm = {
+			name: '',
+			description: '',
+			basePrice: 0,
+			type: 'SHIRT',
+			sizes: '',
+			colors: '',
+			active: true
+		};
+		showModal = true;
+	}
+
+	function closeModal() {
+		showModal = false;
+		editingProduct = null;
+		isEditing = false;
 	}
 </script>
 
@@ -64,20 +131,26 @@
 	<title>Productos - Admin</title>
 </svelte:head>
 
-<div class="flex justify-between items-center mb-6">
+<div class="mb-6 flex items-center justify-between">
 	<h1 class="text-2xl font-bold">Productos</h1>
-	<button 
-		on:click={() => showModal = true}
-		class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg font-medium"
+	<button
+		onclick={openNewModal}
+		class="rounded-lg bg-[#ba5258] px-4 py-2 font-medium text-white hover:bg-red-600"
 	>
 		+ Nuevo Producto
 	</button>
 </div>
 
 {#if loading}
-	<div class="text-center py-8">Cargando...</div>
+	<div class="py-8 text-center">Cargando...</div>
+{:else if products.length === 0}
+	<div class="rounded-lg bg-white p-8 text-center shadow">
+		<div class="mb-4 text-6xl">📦</div>
+		<p class="text-gray-500">No hay productos todavía</p>
+		<p class="mt-2 text-sm text-gray-400">Crea tu primer producto para comenzar</p>
+	</div>
 {:else}
-	<div class="bg-white rounded-lg shadow overflow-hidden">
+	<div class="overflow-hidden rounded-lg bg-white shadow">
 		<table class="w-full">
 			<thead class="bg-gray-50">
 				<tr>
@@ -92,16 +165,42 @@
 				{#each products as product}
 					<tr class="hover:bg-gray-50">
 						<td class="px-6 py-4">{product.name}</td>
-						<td class="px-6 py-4">{product.type}</td>
-						<td class="px-6 py-4">${product.basePrice}</td>
 						<td class="px-6 py-4">
-							<span class="px-2 py-1 text-xs rounded-full {product.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-								{product.active ? 'Activo' : 'Inactivo'}
+							<span class="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
+								{product.type === 'SHIRT' ? 'Camiseta' : 'Sudadera'}
 							</span>
 						</td>
+						<td class="px-6 py-4 font-medium">${product.basePrice.toFixed(2)}</td>
 						<td class="px-6 py-4">
-							<button class="text-blue-600 hover:text-blue-800 mr-3">Editar</button>
-							<button class="text-red-600 hover:text-red-800">Eliminar</button>
+							<button
+								onclick={async () => {
+									product.active = !product.active;
+									await fetch(`/api/products/${product.id}`, {
+										method: 'PUT',
+										headers: { 'Content-Type': 'application/json' },
+										body: JSON.stringify({ active: product.active })
+									});
+								}}
+								class="cursor-pointer rounded-full px-2 py-1 text-xs {product.active
+									? 'bg-green-100 text-green-800'
+									: 'bg-gray-100 text-gray-800'} hover:opacity80"
+							>
+								{product.active ? 'Activo' : 'Inactivo'}
+							</button>
+						</td>
+						<td class="px-6 py-4">
+							<button
+								onclick={() => openEditModal(product)}
+								class="mr-3 font-medium text-blue-600 hover:text-blue-800"
+							>
+								Editar
+							</button>
+							<button
+								onclick={() => deleteProduct(product.id)}
+								class="font-medium text-red-600 hover:text-red-800"
+							>
+								Eliminar
+							</button>
 						</td>
 					</tr>
 				{/each}
@@ -111,43 +210,82 @@
 {/if}
 
 {#if showModal}
-	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-		<div class="bg-white rounded-lg p-6 w-full max-w-lg">
-			<h2 class="text-xl font-bold mb-4">Nuevo Producto</h2>
+	<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+		<div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-6">
+			<h2 class="mb-4 text-xl font-bold">{isEditing ? 'Editar Producto' : 'Nuevo Producto'}</h2>
 			<div class="space-y-4">
 				<div>
-					<label class="block text-sm font-medium mb-1">Nombre</label>
-					<input type="text" bind:value={newProduct.name} class="w-full p-2 border rounded-lg" />
+					<label class="mb-1 block text-sm font-medium">Nombre *</label>
+					<input
+						type="text"
+						bind:value={productForm.name}
+						required
+						class="w-full rounded-lg border p-2"
+					/>
 				</div>
 				<div>
-					<label class="block text-sm font-medium mb-1">Descripción</label>
-					<textarea bind:value={newProduct.description} rows="2" class="w-full p-2 border rounded-lg"></textarea>
+					<label class="mb-1 block text-sm font-medium">Descripción</label>
+					<textarea
+						bind:value={productForm.description}
+						rows="2"
+						class="w-full rounded-lg border p-2"
+					></textarea>
 				</div>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
-						<label class="block text-sm font-medium mb-1">Tipo</label>
-						<select bind:value={newProduct.type} class="w-full p-2 border rounded-lg">
+						<label class="mb-1 block text-sm font-medium">Tipo</label>
+						<select bind:value={productForm.type} class="w-full rounded-lg border p-2">
 							<option value="SHIRT">Camiseta</option>
 							<option value="JACKET">Sudadera</option>
 						</select>
 					</div>
 					<div>
-						<label class="block text-sm font-medium mb-1">Precio</label>
-						<input type="number" bind:value={newProduct.basePrice} step="0.01" class="w-full p-2 border rounded-lg" />
+						<label class="mb-1 block text-sm font-medium">Precio *</label>
+						<input
+							type="number"
+							bind:value={productForm.basePrice}
+							step="0.01"
+							min="0"
+							required
+							class="w-full rounded-lg border p-2"
+						/>
 					</div>
 				</div>
 				<div>
-					<label class="block text-sm font-medium mb-1">Tallas (separadas por coma)</label>
-					<input type="text" bind:value={newProduct.sizes} placeholder="S, M, L, XL" class="w-full p-2 border rounded-lg" />
+					<label class="mb-1 block text-sm font-medium">Tallas (separadas por coma)</label>
+					<input
+						type="text"
+						bind:value={productForm.sizes}
+						placeholder="S, M, L, XL"
+						class="w-full rounded-lg border p-2"
+					/>
 				</div>
 				<div>
-					<label class="block text-sm font-medium mb-1">Colores (separados por coma)</label>
-					<input type="text" bind:value={newProduct.colors} placeholder="Negro, Blanco, Rojo" class="w-full p-2 border rounded-lg" />
+					<label class="mb-1 block text-sm font-medium">Colores (separados por coma o hex)</label>
+					<input
+						type="text"
+						bind:value={productForm.colors}
+						placeholder="Negro, Blanco, #ff0000"
+						class="w-full rounded-lg border p-2"
+					/>
 				</div>
+				{#if isEditing}
+					<div class="flex items-center gap-2">
+						<input type="checkbox" id="active" bind:checked={productForm.active} class="h-4 w-4" />
+						<label for="active" class="text-sm font-medium">Producto activo</label>
+					</div>
+				{/if}
 			</div>
-			<div class="flex justify-end gap-3 mt-6">
-				<button on:click={() => { showModal = false; resetForm(); }} class="px-4 py-2 border rounded-lg">Cancelar</button>
-				<button on:click={saveProduct} class="px-4 py-2 bg-pink-600 text-white rounded-lg">Guardar</button>
+			<div class="mt-6 flex justify-end gap-3">
+				<button onclick={closeModal} class="rounded-lg border px-4 py-2 hover:bg-gray-50"
+					>Cancelar</button
+				>
+				<button
+					onclick={saveProduct}
+					class="rounded-lg bg-[#ba5258] px-4 py-2 text-white hover:bg-red-600"
+				>
+					{isEditing ? 'Actualizar' : 'Crear'}
+				</button>
 			</div>
 		</div>
 	</div>
